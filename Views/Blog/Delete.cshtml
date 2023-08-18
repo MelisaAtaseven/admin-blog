@@ -1,0 +1,18 @@
+﻿
+@model AdminBlog.Models.Blog
+@{
+    ViewBag.Title = "Delete";
+}
+<h2>Delete</h2>
+<h3>Blog yazısı silinsin mi?</h3>
+<div>
+    <h4>Blog</h4>
+    <hr />
+    @using (Html.BeginForm()) {
+        @Html.AntiForgeryToken()  //formun güvenliğini artırmak için
+        <div class="form-actions no-color">
+            <input type="submit" value="Delete" class="btn btn-danger" /> |
+            @Html.ActionLink("Back to List", "Index")
+        </div>
+    }
+</div>

@@ -1,0 +1,88 @@
+﻿@model IEnumerable<AdminBlog.Models.Category>
+@{
+    ViewData["Title"] = "Category";
+}
+<!-- Kategori Ekleme Butonu -->
+<button type="button" onclick="$('#CategoryModal').modal('show')" class="btn btn-success  ml-auto d-flex justify-content-end ">Kategori Ekle</button>
+
+<!-- Kategori Listesi Tablosu -->
+<table class="table table-hover">
+    <thead>
+    <th scope="col">Name</th>
+    <th scope="col"></th>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.Name</td>
+                <td>
+                    <!-- Kategori Silme Butonu -->
+                    <a class="btn btn-danger" asp-route-id="@item.Id" asp-action="DeleteCategory">Sil</a>
+                    <!-- Kategori Güncelleme Butonu -->
+                    <button class="btn btn-success" onclick="updateForm(@item.Id)" type="button">Güncelle</button>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<!-- Kategori Ekleme ve Güncelleme Modalı -->
+<div class="modal" id="CategoryModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Kategori :</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form method="POST" action="/Home/AddCategory" autocomplete="off">
+                <div class="modal-body">
+                    <!-- Gizli alan: Kategori Id -->
+                    <div class="form-group">
+                        <input type="hidden" name="Id" id="Id" class="form-control">
+                        <!-- Kategori Adı -->
+                        <input type="text" name="Name" id="Name" class="form-control">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <!-- Modalı Kapatma Butonu -->
+                    <button type="button" class="btn btn-secondary" onclick="clearForm()" data-dismiss="modal">Kapat</button>
+                    <!-- Kategori Ekleme Butonu -->
+                    <button type="submit" id="saveBtn" class="btn btn-primary">Ekle</button>
+                    <!-- Kategori Güncelleme Butonu -->
+                    <button type="submit" id="updateBtn" class="btn btn-success">Güncelle</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- JavaScript Bölümü -->
+@section Scripts{
+    <script>
+        $(() => clearForm()) // Sayfa yüklendiğinde formu temizler
+        function updateForm(Id) {
+            fetch('/Home/CategoryDetails?Id=' + Id) // Kategori detaylarını almak için istek gönderir
+                .then(res => res.json())
+                .then(res => {
+                    // Detayları alınan kategori bilgileriyle doldurulur
+                    $('#Id').val(res.id)
+                    $('#Name').val(res.name)
+                })
+            // Ekleme ve Güncelleme butonlarını gösterir ve modalı açar
+            $('#saveBtn').hide();
+            $('#updateBtn').show();
+            $('#CategoryModal').modal('show');
+        }
+        function clearForm() {
+            // Formu temizler
+            $('#Id').val(null)
+            $('#Name').val(null)
+            // Ekleme ve Güncelleme butonlarını gösterir
+            $('#saveBtn').show();
+            $('#updateBtn').hide();
+        }
+    </script>
+}

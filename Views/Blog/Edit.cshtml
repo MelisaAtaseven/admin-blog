@@ -1,0 +1,64 @@
+﻿@model AdminBlog.Models.Blog
+<h2>Düzenle</h2>
+<form method="post" asp-action="Update" asp-route-id="@Model.Id">
+    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+    @Html.HiddenFor(model => model.Id)
+
+    <!-- Başlık alanı form grubu -->
+    <div class="form-group">
+        @Html.LabelFor(model => model.Title, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @Html.EditorFor(model => model.Title, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.ValidationMessageFor(model => model.Title, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <!-- Alt Başlık alanı form grubu -->
+    <div class="form-group">
+        @Html.LabelFor(model => model.Subtitle, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @Html.EditorFor(model => model.Subtitle, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.ValidationMessageFor(model => model.Subtitle, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <!-- Yazı içeriği için Summernote editörü -->
+    <div id="summernote" name="Content">
+        @Html.Raw(Model.Content)
+    </div>
+
+    <!-- Gizli input alanı ile içeriğin güncellenmesi -->
+    <div class="form-group " style="display: none;">
+        @Html.LabelFor(model => model.Content, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @Html.EditorFor(model => model.Content, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.ValidationMessageFor(model => model.Content, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <button type="submit" class="btn btn-primary mt-2">Save</button>
+</form>
+
+@section Scripts{
+    <!-- Summernote için gerekli kütüphane -->
+    <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.16/dist/summernote.min.js"></script>
+
+    <script>
+        $(document).ready(function () {
+            // Summernote editörünün ayarları
+            $('#summernote').summernote({
+                // Gerekirse özel ayarlar ekleyebilirsiniz
+            });
+
+            // Başlangıç içeriğini ayarlama
+            var baslangicIcerik = @Html.Raw(Json.Serialize(Model.Content));
+            $('#summernote').summernote('code', baslangicIcerik);
+
+            // Form gönderildiğinde gizli inputu güncel içerikle doldurmak için
+            $('form').on('submit', function () {
+                var guncelIcerik = $('#summernote').summernote('code');
+                $('[name="Content"]').val(guncelIcerik);
+            });
+        });
+    </script>
+}
